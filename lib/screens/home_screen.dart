@@ -300,22 +300,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          // شريط البحث
-          Container(
-            padding: EdgeInsets.all(isMobile ? 12 : 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TextField(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            // شريط البحث والفلاتر ثابت
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  // شريط البحث
+                  Container(
+                    padding: EdgeInsets.all(isMobile ? 12 : 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade200,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
               controller: _searchController,
               textDirection: TextDirection.rtl,
               decoration: InputDecoration(
@@ -697,6 +702,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
+                ],
+              ),
+            ),
+          ];
+        },
+        body: Column(
+          children: [
+            // عدد النتائج مع أنيميشن
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: Padding(
+              padding: EdgeInsets.all(isMobile ? 12 : 16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.search,
+                    color: Colors.teal.shade400,
+                    size: isMobile ? 18 : 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      'تم العثور على ${_filteredProperties.length} عقار',
+                      style: TextStyle(
+                        fontSize: isMobile ? 14 : 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
           // قائمة العقارات مع أنيميشن
           Expanded(
@@ -749,6 +789,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
           ),
         ],
+      ),
       ),
     );
   }
